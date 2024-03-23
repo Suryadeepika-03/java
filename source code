@@ -1,0 +1,109 @@
+package pro;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
+
+// Abstract class to represent customers
+abstract class Customer {
+	protected String name;
+	protected int unitsConsumed;
+	protected LocalDate lastDateToPay;
+
+	public Customer(String name, int unitsConsumed, LocalDate lastDateToPay) {
+		this.name = name;
+		this.unitsConsumed = unitsConsumed;
+		this.lastDateToPay = lastDateToPay;
+	}
+
+	// Abstract method to calculate bill
+	public abstract double calculateBill();
+}
+
+// Residential customer class
+class ResidentialCustomer extends Customer {
+	private static final double RES_RATE = 2.5; // Rate for residential
+												// customers
+
+	public ResidentialCustomer(String name, int unitsConsumed, LocalDate lastDateToPay) {
+		super(name, unitsConsumed, lastDateToPay);
+	}
+
+	@Override
+	public double calculateBill() {
+		return unitsConsumed * RES_RATE;
+	}
+}
+
+// Commercial customer class
+class CommercialCustomer extends Customer {
+	private static final double COM_RATE = 5.5; // Rate for commercial customers
+
+	public CommercialCustomer(String name, int unitsConsumed, LocalDate lastDateToPay) {
+		super(name, unitsConsumed, lastDateToPay);
+	}
+
+	@Override
+	public double calculateBill() {
+		return unitsConsumed * COM_RATE;
+	}
+}
+
+// Main class
+public class ElectricityBillSimulation {
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+
+		while (true) {
+			try {
+				System.out.println("Enter customer details:");
+
+				System.out.print("Name: ");
+				String name = scanner.nextLine();
+
+				System.out.print("EB card number: ");
+				int EB_NO = scanner.nextInt();
+
+				System.out.print("Units consumed: ");
+				int unitsConsumed = scanner.nextInt();
+
+				scanner.nextLine(); // Consume newline
+
+				int daysUntilPayment = 15;
+
+				LocalDate today = LocalDate.now();
+				LocalDate lastDateToPay = today.plusDays(daysUntilPayment);
+
+				System.out.print("Customer type (1 for Residential, 2 for Commercial): ");
+				int customerType = scanner.nextInt();
+
+				Customer customer;
+
+				if (customerType == 1) {
+					customer = new ResidentialCustomer(name, unitsConsumed, lastDateToPay);
+				} else {
+					customer = new CommercialCustomer(name, unitsConsumed, lastDateToPay);
+				}
+
+				double billAmount = customer.calculateBill();
+
+				System.out.println("Electricity bill for " + customer.name + ": Rs." + billAmount);
+				System.out.println("Here is your bill");
+				System.out.println("NAME: " + name);
+				System.out.println("EB Card Number: " + EB_NO);
+				System.out.println("Units consumed: " + unitsConsumed);
+				System.out.println("Bill amount: Rs." + billAmount);
+				System.out.println("Last date to pay your bill: "
+						+ lastDateToPay.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+				System.out.println("Thank you for visiting*");
+
+				break; // Break the loop if everything is successful
+			} catch (Exception e) {
+				System.out.println("Error occurred: " + e.getMessage());
+				System.out.println("Please enter the details again.");
+				scanner.nextLine(); // Consume newline
+			}
+		}
+		scanner.close();
+	}
+}
